@@ -59,20 +59,6 @@ class BooksApp extends React.Component {
                   <Bookshelf books={this.state.books} title="Currently Reading" shelf="currentlyReading"/>
                   <Bookshelf books={this.state.books} title="Want to Read" shelf="wantToRead"/>
                   <Bookshelf books={this.state.books} title="Read" shelf="read"/>
-                {/*
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Currently Reading</h2>
-                    <BookshelfBooks books={this.state.books} shelf="currentlyReading"/>
-                </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Want to Read</h2>
-                    <BookshelfBooks books={this.state.books} shelf="wantToRead"/>
-                </div>
-                <div className="bookshelf">
-                  <h2 className="bookshelf-title">Read</h2>
-                    <BookshelfBooks books={this.state.books} shelf="read"/>
-                </div>
-                */}
               </div>
             </div>
             <div className="open-search">
