@@ -15,15 +15,10 @@ class BooksApp extends React.Component {
     showSearchPage: false
   }
 
-  componentDidMount() {
-      BooksAPI.getAll()
-        .then((books)=>{
-            this.setState(()=>({
-                books
-            }))
-            console.log(books);
-        })
-  }
+  async componentDidMount() {
+    const books = await BooksAPI.getAll()    
+        this.setState(()=>({books}))
+    }
 
   updateBookShelf = (bookToUpdate, shelf) => {
     this.state.books.filter(book => book.id === bookToUpdate.id).map((book) => {
