@@ -4,8 +4,8 @@ class BookshelfBooks extends Component {
     render() {
         return(
           <ol className="books-grid">
-          {this.props.books.filter(book => book.shelf === this.props.shelf).map(book => (
-            <li key={book.id}>
+          {this.props.books.filter(book => book.shelf === this.props.shelf).map((book, index) => (
+            <li key={index}>
               <div className="book">
                 <div className="book-top">
                   <div className="book-cover"
@@ -24,8 +24,8 @@ class BookshelfBooks extends Component {
                   </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                {book.authors.map((author) => (
-                    <div key={author} className="book-authors">{author}</div>
+                {book.authors.map((author, index) => (
+                    <div key={index} className="book-authors">{author}</div>
                 ))}
               </div>
             </li>
