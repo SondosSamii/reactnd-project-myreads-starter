@@ -1,7 +1,8 @@
-import React from 'react'
-import * as BooksAPI from './BooksAPI'
-import './App.css'
-import Bookshelf from './Bookshelf'
+import React from "react";
+import * as BooksAPI from "./BooksAPI";
+import "./App.css";
+import Bookshelf from "./Bookshelf";
+import BookCard from "./BookCard";
 
 class BooksApp extends React.Component {
   state = {
@@ -12,33 +13,74 @@ class BooksApp extends React.Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     books: [],
-    showSearchPage: false
-  }
+    query: "",
+    showSearchPage: false,
+  };
 
   async componentDidMount() {
-    const books = await BooksAPI.getAll()    
-        this.setState(()=>({books}))
-    }
+    const books = await BooksAPI.getAll();
+    this.setState(() => ({ books }));
+  }
 
   updateBookShelf = (bookToUpdate, shelf) => {
-    this.state.books.filter(book => book.id === bookToUpdate.id).map((book) => {
-        bookToUpdate.shelf = shelf;
-        return book
-    })
+    BooksAPI.update(bookToUpdate, shelf);
 
-    BooksAPI.update(bookToUpdate, shelf)
-    .then((books)=> {
-        console.log(books);
-    })
-}
+    let updatedBooks = [];
+    updatedBooks = this.state.books.filter(
+      (book) => book.id !== bookToUpdate.id
+    );
+
+    if (shelf !== "none") {
+      bookToUpdate.shelf = shelf;
+      updatedBooks = updatedBooks.concat(bookToUpdate);
+    }
+
+    this.setState({ books: updatedBooks });
+
+    // console.log(this.state.books);
+    // this.state.books
+    //   .filter((book) => book.id === bookToUpdate.id)
+    //   .map((book) => {
+    //     bookToUpdate.shelf = shelf;
+    //     console.log(book);
+    //     return book;
+    //   });
+
+    // await BooksAPI.update(bookToUpdate, shelf);
+    // console.log(bookToUpdate);
+    // console.log(shelf);
+  };
+
+  async updateQuery(query) {
+    this.setState(() => ({
+      query: query.trim(),
+    }));
+
+    // const searchedBooks = await BooksAPI.search(query);
+    // this.setState(() => ({ books: searchedBooks }));
+  }
 
   render() {
+    const { query } = this.state;
+
+    const showingBooks =
+      query === ""
+        ? this.state.books
+        : this.state.books.filter((term) =>
+            term.title.toLowerCase().includes(query.toLowerCase())
+          );
+
     return (
       <div className="app">
         {this.state.showSearchPage ? (
           <div className="search-books">
             <div className="search-books-bar">
-              <button className="close-search" onClick={() => this.setState({ showSearchPage: false })}>Close</button>
+              <button
+                className="close-search"
+                onClick={() => this.setState({ showSearchPage: false })}
+              >
+                Close
+              </button>
               <div className="search-books-input-wrapper">
                 {/*
                   NOTES: The search from BooksAPI is limited to a particular set of search terms.
@@ -48,12 +90,20 @@ class BooksApp extends React.Component {
                   However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
                   you don't find a specific author or title. Every search is limited by search terms.
                 */}
-                <input type="text" placeholder="Search by title or author"/>
-
+                <input
+                  type="text"
+                  placeholder="Search by title or author"
+                  value={this.state.query}
+                  onChange={(event) => this.updateQuery(event.target.value)}
+                />
               </div>
             </div>
             <div className="search-books-results">
-              <ol className="books-grid"></ol>
+              <ol className="books-grid">
+                {showingBooks.map((book, index) => (
+                  <BookCard key={index} index={index} book={book} />
+                ))}
+              </ol>
             </div>
           </div>
         ) : (
@@ -63,34 +113,36 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                  <Bookshelf
-                    books={this.state.books}
-                    title="Currently Reading"
-                    shelf="currentlyReading"
-                    onUpdateShelf={this.updateBookShelf}
-                    />
-                  <Bookshelf
-                    books={this.state.books}
-                    title="Want to Read"
-                    shelf="wantToRead"
-                    onUpdateShelf={this.updateBookShelf}
-                    />
-                  <Bookshelf
-                    books={this.state.books}
-                    title="Read"
-                    shelf="read"
-                    onUpdateShelf={this.updateBookShelf}
-                    />
+                <Bookshelf
+                  books={this.state.books}
+                  title="Currently Reading"
+                  shelf="currentlyReading"
+                  updateBooks={() => this.updateBookShelf}
+                />
+                <Bookshelf
+                  books={this.state.books}
+                  title="Want to Read"
+                  shelf="wantToRead"
+                  updateBooks={this.updateBookShelf}
+                />
+                <Bookshelf
+                  books={this.state.books}
+                  title="Read"
+                  shelf="read"
+                  updateBooks={this.updateBookShelf}
+                />
               </div>
             </div>
             <div className="open-search">
-              <button onClick={() => this.setState({ showSearchPage: true })}>Add a book</button>
+              <button onClick={() => this.setState({ showSearchPage: true })}>
+                Add a book
+              </button>
             </div>
           </div>
         )}
       </div>
-    )
+    );
   }
 }
 
-export default BooksApp
+export default BooksApp;
