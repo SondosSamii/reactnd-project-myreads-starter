@@ -1,17 +1,12 @@
 import React, { Component } from "react";
+import BookShelfChanger from "./BookShelfChanger";
 
 class BookCard extends Component {
-  state = {
-    key: this.props.index,
-    book: this.props.book,
-    value: this.props.value,
-  };
-
   render() {
-    const { key, book, value } = this.state;
+    const { index, book } = this.props;
 
     return (
-      <li key={key}>
+      <li key={index}>
         <div className="book">
           <div className="book-top">
             <div
@@ -22,21 +17,13 @@ class BookCard extends Component {
                 backgroundImage: `url("${book.imageLinks.thumbnail}")`,
               }}
             />
-            <div className="book-shelf-changer">
-              <select
-                value={value}
-                onChange={(event) => this.props.handleChange(event)}
-              >
-                <option value="move" disabled>
-                  Move to...
-                </option>
-                <option value="currentlyReading">Currently Reading</option>
-                <option value="wantToRead">Want to Read</option>
-                <option value="read">Read</option>
-                <option value="none">None</option>
-              </select>
-            </div>
+            {window.location.pathname !== "/search" ? (
+              <BookShelfChanger />
+            ) : (
+              <></>
+            )}
           </div>
+
           <div className="book-title">{book.title}</div>
           {book.authors.map((author, index) => (
             <div key={index} className="book-authors">
