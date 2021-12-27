@@ -3,7 +3,7 @@ import BookShelfChanger from "./BookShelfChanger";
 
 class BookCard extends Component {
   render() {
-    const { index, book } = this.props;
+    const { index, book, value, updateBookShelf } = this.props;
 
     return (
       <li key={index}>
@@ -18,7 +18,11 @@ class BookCard extends Component {
               }}
             />
             {window.location.pathname !== "/search" ? (
-              <BookShelfChanger />
+              <BookShelfChanger
+                value={value}
+                book={book}
+                updateBookShelf={updateBookShelf}
+              />
             ) : (
               <></>
             )}

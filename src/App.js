@@ -8,12 +8,6 @@ import NotFound from "./NouFound";
 
 class BooksApp extends React.Component {
   state = {
-    /**
-     * TODO: Instead of using this state variable to keep track of which page
-     * we're on, use the URL in the browser's address bar. This will ensure that
-     * users can use the browser's back and forward buttons to navigate between
-     * pages, as well as provide a good URL they can bookmark and share.
-     */
     books: [],
     query: "",
   };
@@ -23,42 +17,26 @@ class BooksApp extends React.Component {
     this.setState(() => ({ books }));
   }
 
-  updateBookShelf = (bookToUpdate, shelf) => {
-    BooksAPI.update(bookToUpdate, shelf);
-
-    let updatedBooks = [];
-    updatedBooks = this.state.books.filter(
-      (book) => book.id !== bookToUpdate.id
-    );
-
-    if (shelf !== "none") {
-      bookToUpdate.shelf = shelf;
-      updatedBooks = updatedBooks.concat(bookToUpdate);
+  async updateBookShelf(bookToUpdate, shelf) {
+    const books = await BooksAPI.update(bookToUpdate, shelf);
+    if (books.length > 0) {
+      this.setState(() => ({
+        books: books,
+      }));
+      // console.log(books);
     }
 
-    this.setState({ books: updatedBooks });
-
-    // console.log(this.state.books);
     // this.state.books
     //   .filter((book) => book.id === bookToUpdate.id)
     //   .map((book) => {
     //     bookToUpdate.shelf = shelf;
-    //     console.log(book);
     //     return book;
     //   });
-
-    // await BooksAPI.update(bookToUpdate, shelf);
-    // console.log(bookToUpdate);
-    // console.log(shelf);
-  };
+  }
 
   async updateQuery(query) {
-    this.setState(() => ({
-      query: query.trim(),
-    }));
-
-    // const searchedBooks = await BooksAPI.search(query);
-    // this.setState(() => ({ books: searchedBooks }));
+    this.setState(() => ({ query: query }));
+    if (query.length > 0) await BooksAPI.search(query);
   }
 
   render() {
@@ -88,19 +66,19 @@ class BooksApp extends React.Component {
                       books={books}
                       title="Currently Reading"
                       shelf="currentlyReading"
-                      updateBooks={() => this.updateBookShelf}
+                      updateBookShelf={this.updateBookShelf}
                     />
                     <Bookshelf
                       books={books}
                       title="Want to Read"
                       shelf="wantToRead"
-                      updateBooks={this.updateBookShelf}
+                      updateBookShelf={this.updateBookShelf}
                     />
                     <Bookshelf
                       books={books}
                       title="Read"
                       shelf="read"
-                      updateBooks={this.updateBookShelf}
+                      updateBookShelf={this.updateBookShelf}
                     />
                   </div>
                 </div>

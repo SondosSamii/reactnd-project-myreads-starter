@@ -2,11 +2,14 @@ import React, { Component } from "react";
 
 class BookShelfChanger extends Component {
   render() {
-    const { value, handleChange } = this.props;
+    const { book, value, updateBookShelf } = this.props;
 
     return (
       <div className="book-shelf-changer">
-        <select value={value} onChange={(event) => handleChange(event)}>
+        <select
+          value={value}
+          onChange={(event) => updateBookShelf(book, event.target.value)}
+        >
           <option value="move" disabled>
             Move to...
           </option>
