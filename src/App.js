@@ -12,27 +12,20 @@ class BooksApp extends React.Component {
     query: "",
   };
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getAllBooks();
+  }
+
+  async getAllBooks() {
     const books = await BooksAPI.getAll();
     this.setState(() => ({ books }));
+    console.log(books);
   }
 
-  async updateBookShelf(bookToUpdate, shelf) {
-    const books = await BooksAPI.update(bookToUpdate, shelf);
-    if (books.length > 0) {
-      this.setState(() => ({
-        books: books,
-      }));
-      // console.log(books);
-    }
-
-    // this.state.books
-    //   .filter((book) => book.id === bookToUpdate.id)
-    //   .map((book) => {
-    //     bookToUpdate.shelf = shelf;
-    //     return book;
-    //   });
-  }
+  updateBookShelf = async (bookToUpdate, shelf) => {
+    await BooksAPI.update(bookToUpdate, shelf);
+    await this.getAllBooks();
+  };
 
   async updateQuery(query) {
     this.setState(() => ({ query: query }));
