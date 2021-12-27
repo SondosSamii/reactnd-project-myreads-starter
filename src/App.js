@@ -36,18 +36,24 @@ class BooksApp extends React.Component {
 
   async updateQuery(query) {
     this.setState(() => ({ query: query }));
-    if (query.length > 0) await BooksAPI.search(query);
+    if (query.length > 0) {
+      const searchedBooks = await BooksAPI.search(query);
+      this.setState(() => ({ books: searchedBooks }));
+    } else if (query.length === 0) {
+      const books = await BooksAPI.getAll();
+      this.setState(() => ({ books: books }));
+    }
   }
 
   render() {
     const { books, query } = this.state;
 
-    const showingBooks =
-      query === ""
-        ? books
-        : books.filter((term) =>
-            term.title.toLowerCase().includes(query.toLowerCase())
-          );
+    // const showingBooks =
+    //   query === ""
+    //     ? books
+    //     : books.filter((term) =>
+    //         term.title.toLowerCase().includes(query.toLowerCase())
+    //       );
 
     return (
       <div className="app">
@@ -111,16 +117,17 @@ class BooksApp extends React.Component {
                     <input
                       type="text"
                       placeholder="Search by title or author"
-                      value={this.state.query}
+                      value={query}
                       onChange={(event) => this.updateQuery(event.target.value)}
                     />
                   </div>
                 </div>
                 <div className="search-books-results">
                   <ol className="books-grid">
-                    {showingBooks.map((book, index) => (
-                      <BookCard key={index} index={index} book={book} />
-                    ))}
+                    {books.length > 0 &&
+                      books.map((book) => (
+                        <BookCard key={book.id} index={book.id} book={book} />
+                      ))}
                   </ol>
                 </div>
               </div>
