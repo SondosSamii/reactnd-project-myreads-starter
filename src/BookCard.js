@@ -8,11 +8,10 @@ class BookCard extends Component {
     book: PropTypes.object.isRequired,
     value: PropTypes.string.isRequired,
     updateBookShelf: PropTypes.func.isRequired,
-    getBook: PropTypes.func,
   };
 
   render() {
-    const { index, book, value, updateBookShelf, getBook } = this.props;
+    const { index, book, value, updateBookShelf } = this.props;
 
     return (
       <div>
@@ -35,7 +34,6 @@ class BookCard extends Component {
                 <BookShelfChanger
                   value={value}
                   book={book}
-                  getBook={getBook}
                   updateBookShelf={updateBookShelf}
                 />
                 {/* {window.location.pathname === "/" ? (

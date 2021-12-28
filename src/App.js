@@ -8,7 +8,6 @@ import NotFound from "./NouFound";
 
 class BooksApp extends React.Component {
   state = {
-    shelf: "none",
     books: [],
     searchedBooks: [],
     query: "",
@@ -22,11 +21,6 @@ class BooksApp extends React.Component {
     const books = await BooksAPI.getAll();
     this.setState(() => ({ books }));
   }
-
-  getBook = async (id) => {
-    const book = await BooksAPI.get(id);
-    this.setState(() => ({ shelf: book.shelf }));
-  };
 
   updateBookShelf = async (bookToUpdate, shelf) => {
     await BooksAPI.update(bookToUpdate, shelf);
@@ -45,7 +39,7 @@ class BooksApp extends React.Component {
   }
 
   render() {
-    const { shelf, books, searchedBooks, query } = this.state;
+    const { books, searchedBooks, query } = this.state;
 
     return (
       <div className="app">
@@ -117,13 +111,17 @@ class BooksApp extends React.Component {
                 <div className="search-books-results">
                   <ol className="books-grid">
                     {searchedBooks.length > 0 &&
+                      query.length > 0 &&
                       searchedBooks.map((book) => (
                         <BookCard
                           key={book.id}
                           index={book.id}
                           book={book}
-                          value={book.shelf ? book.shelf : shelf}
-                          getBook={this.getBook.bind(this)}
+                          value={
+                            books.filter((b) => b.id === book.id).length > 0
+                              ? books.filter((b) => b.id === book.id)[0].shelf
+                              : "none"
+                          }
                           updateBookShelf={this.updateBookShelf}
                         />
                       ))}

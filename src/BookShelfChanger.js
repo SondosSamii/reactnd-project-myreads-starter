@@ -6,18 +6,16 @@ class BookShelfChanger extends Component {
     book: PropTypes.object.isRequired,
     value: PropTypes.string.isRequired,
     updateBookShelf: PropTypes.func.isRequired,
-    getBook: PropTypes.func,
   };
 
   render() {
-    const { book, value, updateBookShelf, getBook } = this.props;
+    const { book, value, updateBookShelf } = this.props;
 
     return (
       <div className="book-shelf-changer">
         <select
-          value={book.shelf ? book.shelf : value}
+          value={value}
           onChange={(event) => {
-            if (window.location.pathname === "/search") getBook(book.id);
             updateBookShelf(book, event.target.value);
           }}
           // getBook={this.props.getBook(book.id)}
