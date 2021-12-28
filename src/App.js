@@ -8,7 +8,9 @@ import NotFound from "./NouFound";
 
 class BooksApp extends React.Component {
   state = {
+    shelf: "none",
     books: [],
+    searchedBooks: [],
     query: "",
   };
 
@@ -19,34 +21,31 @@ class BooksApp extends React.Component {
   async getAllBooks() {
     const books = await BooksAPI.getAll();
     this.setState(() => ({ books }));
-    console.log(books);
   }
+
+  getBook = async (id) => {
+    const book = await BooksAPI.get(id);
+    this.setState(() => ({ shelf: book.shelf }));
+  };
 
   updateBookShelf = async (bookToUpdate, shelf) => {
     await BooksAPI.update(bookToUpdate, shelf);
+    // await this.getBook( bookToUpdate.id );
     await this.getAllBooks();
   };
 
   async updateQuery(query) {
-    this.setState(() => ({ query: query }));
+    this.setState(() => ({
+      query: query,
+    }));
     if (query.length > 0) {
-      const searchedBooks = await BooksAPI.search(query);
-      this.setState(() => ({ books: searchedBooks }));
-    } else if (query.length === 0) {
-      const books = await BooksAPI.getAll();
-      this.setState(() => ({ books: books }));
+      const books = await BooksAPI.search(query);
+      this.setState(() => ({ searchedBooks: books }));
     }
   }
 
   render() {
-    const { books, query } = this.state;
-
-    // const showingBooks =
-    //   query === ""
-    //     ? books
-    //     : books.filter((term) =>
-    //         term.title.toLowerCase().includes(query.toLowerCase())
-    //       );
+    const { shelf, books, searchedBooks, query } = this.state;
 
     return (
       <div className="app">
@@ -117,9 +116,16 @@ class BooksApp extends React.Component {
                 </div>
                 <div className="search-books-results">
                   <ol className="books-grid">
-                    {books.length > 0 &&
-                      books.map((book) => (
-                        <BookCard key={book.id} index={book.id} book={book} />
+                    {searchedBooks.length > 0 &&
+                      searchedBooks.map((book) => (
+                        <BookCard
+                          key={book.id}
+                          index={book.id}
+                          book={book}
+                          value={book.shelf ? book.shelf : shelf}
+                          getBook={this.getBook.bind(this)}
+                          updateBookShelf={this.updateBookShelf}
+                        />
                       ))}
                   </ol>
                 </div>

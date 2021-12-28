@@ -4,13 +4,15 @@ import BookShelfChanger from "./BookShelfChanger";
 
 class BookCard extends Component {
   static propTypes = {
-    book: PropTypes.object.isRequired,
     index: PropTypes.string.isRequired,
-    value: PropTypes.string,
+    book: PropTypes.object.isRequired,
+    value: PropTypes.string.isRequired,
+    updateBookShelf: PropTypes.func.isRequired,
+    getBook: PropTypes.func,
   };
 
   render() {
-    const { index, book, value, updateBookShelf } = this.props;
+    const { index, book, value, updateBookShelf, getBook } = this.props;
 
     return (
       <div>
@@ -18,28 +20,25 @@ class BookCard extends Component {
           <li key={index}>
             <div className="book">
               <div className="book-top">
-                {book.imageLinks ? (
-                  <div
-                    className="book-cover"
-                    style={{
-                      width: 128,
-                      height: 193,
-                      backgroundImage: `url("${book.imageLinks.thumbnail}")`,
-                    }}
-                  />
-                ) : (
-                  <div
-                    className="book-cover"
-                    style={{
-                      width: 128,
-                      height: 193,
-                      backgroundImage: `url("images/book-placeholder.png")`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
-                )}
-                {window.location.pathname === "/" ? (
+                <div
+                  className="book-cover"
+                  style={{
+                    width: 128,
+                    height: 193,
+                    backgroundImage: book.imageLinks
+                      ? `url("${book.imageLinks.thumbnail}")`
+                      : `url("images/book-placeholder.png")`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                  }}
+                />
+                <BookShelfChanger
+                  value={value}
+                  book={book}
+                  getBook={getBook}
+                  updateBookShelf={updateBookShelf}
+                />
+                {/* {window.location.pathname === "/" ? (
                   <BookShelfChanger
                     value={value}
                     book={book}
@@ -47,15 +46,14 @@ class BookCard extends Component {
                   />
                 ) : (
                   <></>
-                )}
+                )} */}
               </div>
               {book.title && <div className="book-title">{book.title}</div>}
-              {book.authors &&
-                book.authors.map((author, index) => (
-                  <div key={index} className="book-authors">
-                    {author}
-                  </div>
-                ))}
+              {book.authors && (
+                <div key={index} className="book-authors">
+                  {book.authors.join(", ")}
+                </div>
+              )}
             </div>
           </li>
         ) : (
